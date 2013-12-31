@@ -1,4 +1,10 @@
 *.py[cod]
+*.py~
+*.pyc
+*.rst~
+.DS_store
+_building
+
 
 # C extensions
 *.so
