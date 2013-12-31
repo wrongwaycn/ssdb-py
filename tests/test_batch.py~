@@ -1,0 +1,36 @@
+#coding=utf-8
+import re
+import time
+from nose.tools import (assert_equals, assert_dict_equal, assert_not_equals,
+                        assert_tuple_equal, raises)
+from threading import Thread
+import ssdb
+from ssdb._compat import Queue
+from ssdb.connection import Connection,ConnectionPool,BlockingConnectionPool
+from ssdb.client import SSDB
+
+
+class TestBatchCase(object):
+
+    def setUp(self):
+        self.client = SSDB(host='127.0.0.1', port=8888)        
+        print('set UP')
+        
+    def tearDown(self):
+        print('tear down')
+    
+    def test_pipeline(self):
+        batch = self.client.batch()
+        batch.set('test_set_a','a1')
+        batch.set('test_set_b','b2')
+        batch.set('test_set_c','c3')
+        batch.set('test_set_d','d4')
+        batch.execute()
+        a1 = self.client.get('test_set_a')
+        assert_equals(a1,'a1')
+        b2 = self.client.get('test_set_b')
+        assert_equals(b2,'b2')
+        c3 = self.client.get('test_set_c')
+        assert_equals(c3,'c3')
+        d4 = self.client.get('test_set_d')
+        assert_equals(d4,'d4')                

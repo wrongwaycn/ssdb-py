@@ -1,0 +1,557 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Code &mdash; ssdb-py 0.01 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.01',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ssdb-py 0.01 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to ssdb-py’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to ssdb-py’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ssdb-py 0.01 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-ssdb.client">
+<span id="code"></span><h1>Code<a class="headerlink" href="#module-ssdb.client" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="client">
+<h2>Client<a class="headerlink" href="#client" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ssdb.client.StrictSSDB">
+<em class="property">class </em><tt class="descclassname">ssdb.client.</tt><tt class="descname">StrictSSDB</tt><big>(</big><em>host='localhost'</em>, <em>port=8888</em>, <em>socket_timeout=None</em>, <em>connection_pool=None</em>, <em>charset='utf-8'</em>, <em>errors='strict'</em>, <em>decode_responses=False</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implementation of the SSDB protocol.</p>
+<p>This abstract class provides a Python interface to all SSDB commands and an
+implementation of the SSDB protocol.</p>
+<p>Connection and Pipeline derive from this, implementing how the commands are
+sent and received to the SSDB server</p>
+</dd></dl>
+
+<div class="section" id="key-value">
+<h3>Key/Value<a class="headerlink" href="#key-value" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ssdb.client</span> <span class="kn">import</span> <span class="n">SSDB</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span> <span class="o">=</span> <span class="n">SSDB</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">multi_set</span><span class="p">(</span><span class="n">set_a</span><span class="o">=</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="n">set_b</span><span class="o">=</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="n">set_c</span><span class="o">=</span><span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="n">set_d</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">multi_set</span><span class="p">(</span><span class="n">set_abc</span><span class="o">=</span><span class="s">&#39;abc&#39;</span><span class="p">,</span> <span class="n">set_count</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="get">
+<h4>get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h4>
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.get">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">get</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value at key <tt class="docutils literal"><span class="pre">name</span></tt>, or <tt class="docutils literal"><span class="pre">None</span></tt> if the key doesn&#8217;t exist</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string</em>) &#8211; the key name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the value at key <tt class="docutils literal"><span class="pre">name</span></tt>, or <tt class="docutils literal"><span class="pre">None</span></tt> if the key doesn&#8217;t exist</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;set_abc&quot;</span><span class="p">)</span>
+<span class="go">&#39;abc&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;set_a&quot;</span><span class="p">)</span>
+<span class="go">&#39;a&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;set_b&quot;</span><span class="p">)</span>
+<span class="go">&#39;b&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;not_exists_abc&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="set">
+<h4>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h4>
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.set">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">set</tt><big>(</big><em>name</em>, <em>value</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value at key <tt class="docutils literal"><span class="pre">name</span></tt> to <tt class="docutils literal"><span class="pre">value</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; the key name</li>
+<li><strong>value</strong> (<em>string</em>) &#8211; a string or an object can be converted to string</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><tt class="docutils literal"><span class="pre">True</span></tt> on success, <tt class="docutils literal"><span class="pre">False</span></tt> if not</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;set_cde&quot;</span><span class="p">,</span> <span class="s">&#39;cde&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;set_cde&quot;</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+<span class="go">True        </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;hundred&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="delete">
+<h4>delete<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h4>
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.delete">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">delete</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the key specified by <tt class="docutils literal"><span class="pre">name</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string</em>) &#8211; the key name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">True</span></tt> on deleting successfully, or <tt class="docutils literal"><span class="pre">False</span></tt> if the key doesn&#8217;t
+exist or failure</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&#39;set_abc&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&#39;set_a&#39;</span><span class="p">)</span>
+<span class="go">True        </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&#39;set_abc&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&#39;not_exist&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="exists">
+<h4>exists<a class="headerlink" href="#exists" title="Permalink to this headline">¶</a></h4>
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.exists">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">exists</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a boolean indicating whether key <tt class="docutils literal"><span class="pre">name</span></tt> exists</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string</em>) &#8211; the key name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">True</span></tt> if the key exists, <tt class="docutils literal"><span class="pre">False</span></tt> if not</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s">&#39;set_abc&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s">&#39;set_a&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s">&#39;not_exist&#39;</span><span class="p">)</span>
+<span class="go">False        </span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="incr">
+<h4>incr<a class="headerlink" href="#incr" title="Permalink to this headline">¶</a></h4>
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.incr">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">incr</tt><big>(</big><em>name</em>, <em>amount=1</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.incr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase the value at key <tt class="docutils literal"><span class="pre">name</span></tt> by <tt class="docutils literal"><span class="pre">amount</span></tt>. If no key exists, the value
+will be initialized as <tt class="docutils literal"><span class="pre">amount</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; the key name</li>
+<li><strong>amount</strong> (<em>int</em>) &#8211; increments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the integer value at key <tt class="docutils literal"><span class="pre">name</span></tt></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s">&#39;set_count&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">13</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s">&#39;set_count&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">14</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s">&#39;temp_count&#39;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
+<span class="go">42        </span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="decr">
+<h4>decr<a class="headerlink" href="#decr" title="Permalink to this headline">¶</a></h4>
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.decr">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">decr</tt><big>(</big><em>name</em>, <em>amount=1</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.decr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrease the value at key <tt class="docutils literal"><span class="pre">name</span></tt> by <tt class="docutils literal"><span class="pre">amount</span></tt>. If no key exists, the value
+will be initialized as 0 - <tt class="docutils literal"><span class="pre">amount</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; the key name</li>
+<li><strong>amount</strong> (<em>int</em>) &#8211; decrements</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the integer value at key <tt class="docutils literal"><span class="pre">name</span></tt></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">decr</span><span class="p">(</span><span class="s">&#39;set_count&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">decr</span><span class="p">(</span><span class="s">&#39;set_count&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">decr</span><span class="p">(</span><span class="s">&#39;temp_count&#39;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
+<span class="go">-42                </span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="multi-set">
+<h4>multi_set<a class="headerlink" href="#multi-set" title="Permalink to this headline">¶</a></h4>
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.multi_set">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">multi_set</tt><big>(</big><em>**kvs</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.multi_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set key/value based on a mapping dictionary as kwargs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kvs</strong> (<em>dict</em>) &#8211; a key/value mapping dict</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the number of successful operation</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">multi_set</span><span class="p">(</span><span class="n">set_a</span><span class="o">=</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="n">set_b</span><span class="o">=</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="n">set_c</span><span class="o">=</span><span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="n">set_d</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">multi_set</span><span class="p">(</span><span class="n">set_abc</span><span class="o">=</span><span class="s">&#39;abc&#39;</span><span class="p">,</span><span class="n">set_count</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="multi-get">
+<h4>multi_get<a class="headerlink" href="#multi-get" title="Permalink to this headline">¶</a></h4>
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.multi_get">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">multi_get</tt><big>(</big><em>*keys</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.multi_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary of key/value from keys</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>keys</strong> (<em>list</em>) &#8211; a list of keys</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a dict mapping key/value</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">multi_get</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">)</span>
+<span class="go">{&#39;a&#39;:&#39;a&#39;, &#39;c&#39;:&#39;c&#39;, &#39;b&#39;:&#39;b&#39;, &#39;d&#39;:&#39;d&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssdb</span><span class="o">.</span><span class="n">multi_set</span><span class="p">(</span><span class="s">&#39;set_abc&#39;</span><span class="p">,</span><span class="s">&#39;set_count&#39;</span><span class="p">)</span>
+<span class="go">{&#39;set_abc&#39;:&#39;set_abc&#39;, &#39;set_count&#39;:&#39;10&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="hash">
+<h3>Hash<a class="headerlink" href="#hash" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.hget">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">hget</tt><big>(</big><em>name</em>, <em>key</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.hget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of <tt class="docutils literal"><span class="pre">key</span></tt> within the hash <tt class="docutils literal"><span class="pre">name</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; the hash name</li>
+<li><strong>key</strong> (<em>string</em>) &#8211; the key name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the value at <tt class="docutils literal"><span class="pre">key</span></tt> within hash <tt class="docutils literal"><span class="pre">name</span></tt> , or <tt class="docutils literal"><span class="pre">None</span></tt> if the
+<tt class="docutils literal"><span class="pre">name</span></tt> or the <tt class="docutils literal"><span class="pre">key</span></tt> doesn&#8217;t exist</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.hset">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">hset</tt><big>(</big><em>name</em>, <em>key</em>, <em>value</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.hset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of <tt class="docutils literal"><span class="pre">key</span></tt> within the hash <tt class="docutils literal"><span class="pre">name</span></tt> to <tt class="docutils literal"><span class="pre">value</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; the hash name</li>
+<li><strong>key</strong> (<em>string</em>) &#8211; the key name</li>
+<li><strong>value</strong> (<em>string</em>) &#8211; a string or an object can be converted to string</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><tt class="docutils literal"><span class="pre">True</span></tt> if <tt class="docutils literal"><span class="pre">hset</span></tt> created a new field, otherwise <tt class="docutils literal"><span class="pre">False</span></tt></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.hdelete">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">hdelete</tt><big>(</big><em>name</em>, <em>key</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.hdelete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the <tt class="docutils literal"><span class="pre">key</span></tt> from hash <tt class="docutils literal"><span class="pre">name</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; the hash name</li>
+<li><strong>key</strong> (<em>string</em>) &#8211; the key name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><tt class="docutils literal"><span class="pre">True</span></tt> if deleted successfully, otherwise <tt class="docutils literal"><span class="pre">False</span></tt></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="zset">
+<h3>Zset<a class="headerlink" href="#zset" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.zget">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">zget</tt><big>(</big><em>name</em>, <em>key</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.zget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the score of <tt class="docutils literal"><span class="pre">key</span></tt> from the zset at <tt class="docutils literal"><span class="pre">name</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; the hash name</li>
+<li><strong>key</strong> (<em>string</em>) &#8211; the key name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the score, <tt class="docutils literal"><span class="pre">None</span></tt> if the hash <tt class="docutils literal"><span class="pre">name</span></tt> or the <tt class="docutils literal"><span class="pre">key</span></tt> doesn&#8217;t exist</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.zset">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">zset</tt><big>(</big><em>name</em>, <em>key</em>, <em>score=1</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.zset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the score of <tt class="docutils literal"><span class="pre">key</span></tt> from the zset <tt class="docutils literal"><span class="pre">name</span></tt> to <tt class="docutils literal"><span class="pre">score</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; the hash name</li>
+<li><strong>key</strong> (<em>string</em>) &#8211; the key name</li>
+<li><strong>score</strong> (<em>int</em>) &#8211; the score for ranking</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><tt class="docutils literal"><span class="pre">True</span></tt> if <tt class="docutils literal"><span class="pre">zset</span></tt> created a new score, otherwise <tt class="docutils literal"><span class="pre">False</span></tt></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssdb.client.StrictSSDB.zdelete">
+<tt class="descclassname">StrictSSDB.</tt><tt class="descname">zdelete</tt><big>(</big><em>name</em>, <em>key</em><big>)</big><a class="headerlink" href="#ssdb.client.StrictSSDB.zdelete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the specified <tt class="docutils literal"><span class="pre">key</span></tt> from the zset at <tt class="docutils literal"><span class="pre">name</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; the hash name</li>
+<li><strong>key</strong> (<em>string</em>) &#8211; the key name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><tt class="docutils literal"><span class="pre">True</span></tt> if deleted success, otherwise <tt class="docutils literal"><span class="pre">False</span></tt></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Code</a><ul>
+<li><a class="reference internal" href="#client">Client</a><ul>
+<li><a class="reference internal" href="#key-value">Key/Value</a><ul>
+<li><a class="reference internal" href="#get">get</a></li>
+<li><a class="reference internal" href="#set">set</a></li>
+<li><a class="reference internal" href="#delete">delete</a></li>
+<li><a class="reference internal" href="#exists">exists</a></li>
+<li><a class="reference internal" href="#incr">incr</a></li>
+<li><a class="reference internal" href="#decr">decr</a></li>
+<li><a class="reference internal" href="#multi-set">multi_set</a></li>
+<li><a class="reference internal" href="#multi-get">multi_get</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hash">Hash</a></li>
+<li><a class="reference internal" href="#zset">Zset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to ssdb-py&#8217;s documentation!</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/code.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to ssdb-py’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">ssdb-py 0.01 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, wrongway.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.
+    </div>
+  </body>
+</html>
