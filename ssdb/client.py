@@ -1030,11 +1030,11 @@ class StrictSSDB(object):
         :return: the number of successful creation
         :rtype: int
 
-        >>> ssdb.multi_hset('zset_4', a=100, b=80, c=90, d=70)
+        >>> ssdb.multi_zset('zset_4', a=100, b=80, c=90, d=70)
         4
-        >>> ssdb.multi_hset('zset_4', a=100, b=80, c=90, d=70)
+        >>> ssdb.multi_zset('zset_4', a=100, b=80, c=90, d=70)
         0
-        >>> ssdb.multi_hset('zset_4', a=100, b=80, c=90, d=70, e=60)
+        >>> ssdb.multi_zset('zset_4', a=100, b=80, c=90, d=70, e=60)
         1        
         """                                        
         for k,v in kvs.items():

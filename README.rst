@@ -54,7 +54,7 @@ Getting Started
    >>> ssdb.multi_zset('zset_1', a=30, b=20, c=100, d=1, e=64, f=-3,
    ...                 g=0)
    7
-   >>> ssdb.multi_hset('zset_2',
+   >>> ssdb.multi_zset('zset_2',
    ...                 key1=42,
    ...                 key2=314,
    ...                 key3=1,
