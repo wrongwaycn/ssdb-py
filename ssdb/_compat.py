@@ -51,6 +51,10 @@ else:
     bytes = bytes
     long = int
 
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ssdb.utils import SortedDict as OrderedDict
 
 try:
     # Python 3

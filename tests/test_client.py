@@ -113,7 +113,7 @@ class TestClient(object):
         assert_equals(a,len(params))        
         r = self.client.multi_get(*params.keys())
         assert_dict_equal(r,params)
-        d = self.client.multi_delete(*params.keys())
+        d = self.client.multi_del(*params.keys())
         assert_equals(d,len(params))
 
     def test_keys(self):
@@ -131,43 +131,80 @@ class TestClient(object):
         assert_equals(a,len(params))
         b = self.client.keys('uuu ','uuuu',10)
         assert_items_equal(b,params.keys())
-        d = self.client.multi_delete(*params.keys())
+        d = self.client.multi_del(*params.keys())
         assert_equals(d,len(params))        
 
     def test_scan(self):
-        params = {
-            'zzz0': 'a1',
-            'zzz1': 'b2',
-            'zzz2': 'c3',
-            'zzz3': 'd4',
-            'zzz4': 'e5',
-            'zzz5': 'f6',
-            'zzz6': 'g7',
-            'zzz7': 'h8',            
-        }
+        keys = [
+            'zzz0',
+            'zzz1',
+            'zzz2',
+            'zzz3',
+            'zzz4',
+            'zzz5',
+            'zzz6',
+            'zzz7'
+        ]
+        values = [
+            'a1',
+            'b2',
+            'c3',
+            'd4',
+            'e5',
+            'f6',
+            'g7',
+            'h8'
+        ]
+        params = {}
+        for i in range(len(keys)):
+            params[keys[i]] = values[i]
         a = self.client.multi_set(**params)
         assert_equals(a,len(params))
         b = self.client.scan('zzz ','zzzz',10)
         assert_dict_equal(b,params)
-        d = self.client.multi_delete(*params.keys())
+        index = 0
+        for k,v in b.items():
+            assert_equals(k, keys[index])
+            assert_equals(v, values[index])
+            index += 1
+        d = self.client.multi_del(*params.keys())
         assert_equals(d,len(params))
 
     def test_rscan(self):
-        params = {
-            'zzzz0': 'aa1',
-            'zzzz1': 'bb2',
-            'zzzz2': 'cc3',
-            'zzzz3': 'dd4',
-            'zzzz4': 'ee5',
-            'zzzz5': 'ff6',
-            'zzzz6': 'gg7',
-            'zzzz7': 'hh8',            
-        }
+        keys = [
+            'zzzz0',
+            'zzzz1',
+            'zzzz2',
+            'zzzz3',
+            'zzzz4',
+            'zzzz5',
+            'zzzz6',
+            'zzzz7'
+        ]
+        values = [
+            'aa1',
+            'bb2',
+            'cc3',
+            'dd4',
+            'ee5',
+            'ff6',
+            'gg7',
+            'hh8'
+        ]
+        params = {}
+        for i in range(len(keys)):
+            params[keys[i]] = values[i]        
         a = self.client.multi_set(**params)
         assert_equals(a,len(params))
         b = self.client.rscan('zzzzz','zzzz ',10)
         assert_dict_equal(b,params)
-        d = self.client.multi_delete(*params.keys())
+        index = 0
+        c = len(keys)
+        for k,v in b.items():
+            assert_equals(k, keys[c-index-1])
+            assert_equals(v, values[c-index-1])
+            index += 1        
+        d = self.client.multi_del(*params.keys())
         assert_equals(d,len(params))
 
     def test_hset(self):
@@ -193,9 +230,9 @@ class TestClient(object):
         assert_true(e)
         b = self.client.hexists('test_hdel', 'keyc')
         assert_false(b)                
-        b = self.client.hdelete('test_hdel', 'keya')
+        b = self.client.hdel('test_hdel', 'keya')
         assert_true(b)
-        b = self.client.hdelete('test_hdel', 'keyb')
+        b = self.client.hdel('test_hdel', 'keyb')
         assert_true(b)
         b = self.client.hexists('test_hdel', 'keyb')
         assert_false(b)        
@@ -281,7 +318,7 @@ class TestClient(object):
         })
         r = self.client.multi_hget('multi', *params.keys())
         assert_dict_equal(r,params)
-        d = self.client.multi_hdelete('multi', *params.keys())
+        d = self.client.multi_hdel('multi', *params.keys())
         assert_equals(d,len(params))
         #d = self.client.hclear('multi')
         #assert_true(d)
@@ -408,7 +445,7 @@ class TestClient(object):
             a = self.client.multi_zget(k, *v.keys())
             assert_dict_equal(a, v)
         for k,v in params.items():
-            d = self.client.multi_zdelete(k, *v.keys())
+            d = self.client.multi_zdel(k, *v.keys())
             assert_equals(d, len(v))
         for k,v in params['zset_a'].items():
             a = self.client.zset('zset_a', k, v)
@@ -417,7 +454,7 @@ class TestClient(object):
             a = self.client.zget('zset_a', k)
             assert_equals(a,v)
         for k,v in params['zset_a'].items():
-            a = self.client.zdelete('zset_a', k)
+            a = self.client.zdel('zset_a', k)
             assert_true(a)
         for k,v in params['zset_b'].items():
             a = self.client.zset('zset_b', k, v)

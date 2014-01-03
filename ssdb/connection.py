@@ -136,9 +136,8 @@ class Connection(object):
     """
     Manages TCP communication to and from a SSDB server
 
-    parameters:
-        host:host to connect
-        port:port to connect
+        >>> from ssdb.connection import Connection
+        >>> conn = Connection(host='localhost', port=8888)
     """
 
     description_format = "Connection<host=%(host)s,port=%(port)s>"
@@ -307,7 +306,15 @@ class Connection(object):
     
 class ConnectionPool(object):
     """
-    Generic connection pool
+    Generic connection pool.
+
+        >>> from ssdb.client import SSDB
+        >>> client = SSDB(connection_pool=ConnectionPool())
+        
+    If max_connections is set, then this objectraises ssdb.ConnectionError when
+    the pool's limit is reached. By default, TCP connections are created
+    connection_class is specified. Any additionan keyword arguments are passed
+    to the constructor of connection_class.
     """
     def __init__(self, connection_class=Connection, max_connections=None,
                  **connection_kwargs):
@@ -404,11 +411,11 @@ class BlockingConnectionPool(object):
     Use ``timeout`` to tell it either how many seconds to wait for a connection
     to become available, or to block forever:
 
-        #Block forever.
+        >>> #Block forever.
         >>> pool = BlockingConnectionPool(timeout=None)
 
-        #Raise a ``ConnectionError`` after five seconds if a connection is not
-        #available
+        >>> #Raise a ``ConnectionError`` after five seconds if a connection is not
+        >>> #available
         >>> pool = BlockingConnectionPool(timeout=5)
     """
     def __init__(self, max_connections=50, timeout=20, connection_class=None,
@@ -492,7 +499,7 @@ class BlockingConnectionPool(object):
         try:
             connection = self.pool.get(block=True, timeout=self.timeout)
         except Empty:
-            # Note that this is not caught by the redis client and will be
+            # Note that this is not caught by the ssdb client and will be
             # raised unless handled by application code. If you want never to
             raise ConnectionError("No connection available")
 

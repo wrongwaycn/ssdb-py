@@ -56,7 +56,7 @@ class TestBatchCase(object):
         assert_equals(c1, 'c1')
         d1 = self.client.hget('hset_a', 'd')
         assert_equals(d1, 'd1')                
-        d = self.client.multi_delete('test_set_a', 'test_set_b', 'test_set_c',
+        d = self.client.multi_del('test_set_a', 'test_set_b', 'test_set_c',
                                      'test_set_d')
         d = self.client.hclear('hset_a')
         assert_true(d)
