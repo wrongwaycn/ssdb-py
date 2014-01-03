@@ -29,9 +29,9 @@ Quickstart
 
 .. code-block:: python
 
-   >>> from ssdb.SSDB
+   >>> from ssdb import SSDB
    >>> import time
-   >>> ssdb = ssdb.SSDB(host='127.0.0.1', port=8888)
+   >>> ssdb = SSDB(host='127.0.0.1', port=8888)
    >>> ssdb.multi_set(set_a='a', set_b='b', set_c='c', set_d='d')
    4
    >>> ssdb.multi_set(set_x1='x1', set_x2='x2', set_x3='x3', set_x4='x4')
