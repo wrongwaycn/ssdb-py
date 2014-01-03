@@ -1,37 +1,38 @@
-.. ssdb-py documentation master file, created by
-   sphinx-quickstart on Mon Dec 30 16:01:21 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+ssdb-py
+=======
 
-Welcome to ssdb-py's documentation!
-===================================
-
-What is SSDB?
--------------
-
-SSDB is a fast NoSQL database for storing big list of billions of elements.
-
-SSDB is stable, production-ready and is widely used by many Internet companies
-including QIHU 360. It's repository is https://github.com/ideawu/ssdb
+The Python interface to the SSDB like Redis-py
 
 
-About ssdb-py
--------------
+Installation
+------------
 
-ssdb-py is a ssdb python client like redis. It provides two types of
-connection-pool and a group of functions of ssdb.
+To install ssdb-py, simply:
 
-It's repository is https://github.com/wrongwaycn/ssdb-py
+.. code-block:: bash
+
+    $ sudo pip install ssdb
+
+or alternatively (you really should be using pip though):
+
+.. code-block:: bash
+
+    $ sudo easy_install ssdb
+
+or from source:
+
+.. code-block:: bash
+
+    $ sudo python setup.py install
 
 
-Quickstart
-----------
+Getting Started
+---------------
 
-.. code-block:: python
+.. code-block:: pycon
 
-   >>> from ssdb.SSDB
-   >>> import time
-   >>> ssdb = ssdb.SSDB(host='127.0.0.1', port=8888)
+   >>> from ssdb import SSDB
+   >>> ssdb = SSDB.StrictSSDB(host='localhost', port=8888)
    >>> ssdb.multi_set(set_a='a', set_b='b', set_c='c', set_d='d')
    4
    >>> ssdb.multi_set(set_x1='x1', set_x2='x2', set_x3='x3', set_x4='x4')
@@ -113,22 +114,4 @@ Quickstart
    2
    >>> ssdb.zrrange('zset_1', 0, 4)
    {'c': 100, 'e': 64, 'a': 30, 'b': 20}
-      
-
-Content
--------
-
-.. toctree::
-   :maxdepth: 2
-  
-   connection
-   code
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
