@@ -94,6 +94,9 @@ class TestBlockingConnectionPoolCase(object):
                 max_connections=max_connections,
                 timeout=timeout,
                 **connection_info)
+        print('******************************111')
+        print(pool)
+        print('******************************111')        
         return pool
 
     def test_connection_creation(self):

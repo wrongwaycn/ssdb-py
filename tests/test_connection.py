@@ -1,4 +1,5 @@
 #coding=utf-8
+import time
 from nose.tools import assert_equals, assert_list_equal, with_setup, raises
 import ssdb
 from ssdb.connection import Connection
@@ -47,179 +48,182 @@ class TestConnection(object):
         print(self.connection._sock)
         assert_equals(2,2)
 
-    def test_response(self):
+        
+    def test_set(self):
         self.connection.connect()
 
         #----------------------set a hi------------------------
-        self.connection.send_command('set','a','hi')
+        self.connection.send_command('set','set_value','hi')
         p = self.connection.read_response()
         assert_list_equal(p,['ok','1'])
 
-        self.connection.send_command('get','a')
+        self.connection.send_command('get','set_value')
         p = self.connection.read_response()
         assert_list_equal(p,['ok','hi'])
 
-        #----------------------set test 123------------------------        
-        self.connection.send_command('set','test','123')
+        self.connection.send_command('set','set_value','')
         p = self.connection.read_response()
         assert_list_equal(p,['ok','1'])
 
-        self.connection.send_command('get','test')
+        self.connection.send_command('get','set_value')
         p = self.connection.read_response()
-        assert_list_equal(p,['ok','123'])
+        assert_list_equal(p,['ok',''])        
 
-        #----------------------incr test 1------------------------        
-        self.connection.send_command('incr','test','1')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','124'])
-
-        self.connection.send_command('get','test')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','124'])
-
-        #----------------------decr test 1------------------------        
-        self.connection.send_command('decr','test','1')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','123'])
-
-        self.connection.send_command('get','test')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','123'])
-
-        #----------------------scan test a z 10------------------------        
-        self.connection.send_command('scan','tess','test','10')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','test','123'])
-
-        #----------------------rscan test z a 10------------------------        
-        self.connection.send_command('rscan','tesv','test','10')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','test','123'])
-
-        #----------------------keys a z 10------------------------        
-        self.connection.send_command('keys','tess','test','10')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','test'])
-
-        #----------------------del test------------------------        
-        self.connection.send_command('del','test')
+        self.connection.send_command('del','set_value')
         p = self.connection.read_response()
         assert_list_equal(p,['ok','1'])
 
-        self.connection.send_command('get','test')
-        p = self.connection.read_response()
-        assert_list_equal(p,['not_found'])
-
-        #----------------------zset test a 20------------------------        
-        self.connection.send_command('zset','test', 'a', 20)
+        self.connection.send_command('del','set_value')
         p = self.connection.read_response()
         assert_list_equal(p,['ok','1'])
 
-        self.connection.send_command('zget','test', 'a')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','20'])
-
-        #----------------------zincr test a 20------------------------        
-        self.connection.send_command('zincr','test', 'a', 20)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','40'])
-
-        self.connection.send_command('zdecr','test', 'a', 20)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','20'])
-
-        #----------------------zscan test a 20------------------------
-        self.connection.send_command('zset', 'test', 'b', 30)
-        p = self.connection.read_response()
-        self.connection.send_command('zset', 'test', 'c', 40)
-        p = self.connection.read_response()
-        self.connection.send_command('zscan','test', '', 0, 100, 10)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','a','20','b','30','c','40'])
-
-        self.connection.send_command('zrscan','test', 'a', 100, 0, 10)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','c','40','b','30','a','20'])
-
-        #----------------------zkeys test a 0 100 10------------------------
-        self.connection.send_command('zkeys', 'test', 'a', 0, 100, 10)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','a','b','c'])
-                
-        #----------------------zdel test a ------------------------        
-        self.connection.send_command('zdel','test', 'a')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','1'])
-
-        self.connection.send_command('zget','test', 'a')
-        p = self.connection.read_response()
-        assert_list_equal(p,['not_found'])
-
-        #----------------------del test------------------------        
-        self.connection.send_command('del','test')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','1'])
-
-        self.connection.send_command('get','test')
-        p = self.connection.read_response()
-        assert_list_equal(p,['not_found'])        
-
-        #----------------------hset test a 20------------------------        
-        self.connection.send_command('hset','test', 'a', 23)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','1'])
-
-        self.connection.send_command('hget','test', 'a')
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','23'])
-                
-        #----------------------hincr test a 20------------------------        
-        self.connection.send_command('hincr','test', 'a', 7)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','30'])
-
-        self.connection.send_command('hdecr','test', 'a', 20)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','10'])
         
-        #----------------------hscan test ------------------------
-        self.connection.send_command('hset', 'test', 'b', 'b2')
-        p = self.connection.read_response()
-        self.connection.send_command('hset', 'test', 'c', 'c3')
-        p = self.connection.read_response()
-        self.connection.send_command('hscan','test', '0', 'z', 10)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','a','10','b','b2','c','c3'])
+    def test_ttl_expire(self):
+        self.connection.connect()
 
-        #----------------------hrscan test ------------------------        
-        self.connection.send_command('hrscan','test', 'z', '0', 10)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','c','c3','b','b2','a','10'])
-
-        #----------------------hkeys test a 0 100 10------------------------
-        self.connection.send_command('hkeys', 'test', '0', 'z', 10)
-        p = self.connection.read_response()
-        assert_list_equal(p,['ok','a','b','c'])
-                
-        #----------------------hdel test a ------------------------        
-        self.connection.send_command('hdel','test', 'a')
+        self.connection.send_command('set','expire_value','expire')
         p = self.connection.read_response()
         assert_list_equal(p,['ok','1'])
 
-        self.connection.send_command('hget','test', 'a')
-        p = self.connection.read_response()
-        assert_list_equal(p,['not_found'])
+        ## self.connection.send_command('ttl','expire_value')
+        ## p = self.connection.read_response()
+        ## assert_list_equal(p,['ok','-1'])                
 
-        #----------------------del test------------------------        
-        self.connection.send_command('del','test')
+        self.connection.send_command('get','expire_value')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','expire'])        
+        
+        self.connection.send_command('expire','expire_value','3')
         p = self.connection.read_response()
         assert_list_equal(p,['ok','1'])
 
-        self.connection.send_command('del','a')
+        self.connection.send_command('ttl','expire_value')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','3'])
+
+        self.connection.send_command('get','expire_value')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','expire'])
+
+        self.connection.send_command('expire','expire_value_not_exist','3')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','0'])
+
+        self.connection.send_command('del','expire_value')
         p = self.connection.read_response()
         assert_list_equal(p,['ok','1'])        
 
-        self.connection.send_command('get','test')
-        p = self.connection.read_response()
-        assert_list_equal(p,['not_found'])        
+        ## time.sleep(4)        
+        
+        ## self.connection.send_command('get','expire_value')
+        ## p = self.connection.read_response()
+        ## assert_list_equal(p,['not_found',''])
 
+        ## self.connection.send_command('ttl','expire_value')
+        ## p = self.connection.read_response()
+        ## assert_list_equal(p,['ok','-1'])
+
+        ## self.connection.send_command('ttl','expire_value_not_exist')
+        ## p = self.connection.read_response()
+        ## assert_list_equal(p,['ok','-1'])
+
+    def test_getset(self):
+        self.connection.connect()
+
+        self.connection.send_command('getset','getset_test','test')
+        p = self.connection.read_response()
+        assert_list_equal(p,['not_found',''])
+
+        self.connection.send_command('set','getset_test','no value')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','1'])
+
+        self.connection.send_command('getset','getset_test','values')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','no value'])
+
+        self.connection.send_command('getset','getset_test','new value')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','values'])
+
+        self.connection.send_command('del','getset_test')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','1'])
+
+    def test_setnx(self):
+        self.connection.connect()
+
+        self.connection.send_command('setnx','setnx_test','test')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','1'])
+
+        self.connection.send_command('setnx','setnx_test','test2')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','0'])
+
+        self.connection.send_command('get','setnx_test')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','test'])
+
+        self.connection.send_command('del','setnx_test')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','1'])
+
+        
+    def test_incr(self):
+        self.connection.connect()
+        #----------------------incr test 1------------------------
+        self.connection.send_command('set','incr_test','100')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','1'])
+                
+        self.connection.send_command('incr','incr_test','1')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','101'])
+
+        self.connection.send_command('incr','incr_test','-10')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','91'])        
+
+        self.connection.send_command('del','incr_test')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','1'])
+
+        
+    def test_bit(self):
+        self.connection.connect()
+        #----------------------bit test------------------------
+        self.connection.send_command('set','bit_test','1')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','1'])
+                
+        self.connection.send_command('setbit','bit_test','4','0')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','1'])
+
+        self.connection.send_command('getbit','bit_test','4')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','0'])        
+
+        self.connection.send_command('get','bit_test')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','!'])
+
+        self.connection.send_command('set','bit_test','1234567890')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','1'])
+
+        self.connection.send_command('countbit','bit_test','0','1')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','3'])
+
+        self.connection.send_command('countbit','bit_test','3','-3')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','16'])                        
+
+        self.connection.send_command('del','bit_test')
+        p = self.connection.read_response()
+        assert_list_equal(p,['ok','1'])
+
+
+        

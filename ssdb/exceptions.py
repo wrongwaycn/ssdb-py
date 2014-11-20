@@ -2,7 +2,17 @@
 
 "Core exceptions raised by the SSDB client"
 from ssdb._compat import unicode
+from collections import namedtuple
 
+response_status = ["ok", "not_found", "error", "fail", "client_error"]
+RES_STATUS_MSG = {
+    "ok": "Opreation successfully.",
+    "not_found": "Not found.",
+    "error": "SSDB error.",
+    "fail": "Operation failed.",    
+    "client_error": "Client or command error."
+    }
+RES_STATUS = namedtuple('response_status', ','.join(response_status).upper())._make(response_status)
 
 class SSDBError(Exception):
         pass
@@ -21,6 +31,9 @@ class AuthenticationError(SSDBError):
     pass
 
 class ServerError(SSDBError):
+    pass
+
+class TimeoutError(SSDBError):
     pass
 
 class ConnectionError(SSDBError):
@@ -50,3 +63,8 @@ class NoScriptError(ResponseError):
 class ExecAbortError(ResponseError):
     pass
 
+class LockError(SSDBError, ValueError):
+    "Errors acquiring or releasing a lock"
+    # NOTE: For backwards compatability, this class derives from ValueError.
+    # This was originally chosen to behave like threading.Lock.
+    pass

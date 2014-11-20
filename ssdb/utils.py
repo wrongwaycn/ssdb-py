@@ -9,6 +9,41 @@ def batch(ssdb_obj):
 
 pipeline = batch
 
+def get_integer(name, num):
+    if not isinstance(num, int):
+        raise ValueError('``%s`` must be a integer' % name)
+    return num
+
+def get_integer_or_emptystring(name, num):
+    if not isinstance(num, int) and num != '':
+        raise ValueError('``%s`` must be a integer or an empty string' % name)
+    return num
+
+def get_nonnegative_integer(name, num):
+    is_valid = isinstance(num, int) and num >= 0
+    if not is_valid:
+        raise ValueError('``%s`` must be a nonnegative integer' % name)
+    return num
+
+def get_positive_integer(name, num):
+    is_valid = isinstance(num, int) and num > 0
+    if not is_valid:
+        raise ValueError('``%s`` must be a positive integer' % name)
+    return num
+
+def get_negative_integer(name, num):
+    is_valid = isinstance(num, int) and num < 0
+    if not is_valid:
+        raise ValueError('``%s`` must be a negative integer' % name)
+    return num
+
+def get_boolean(name, bol):
+    is_valid = (bol==1) or (bol==0) or (bol==True) or (bol==False)
+    if not is_valid:
+        raise ValueError('``%s`` must be a boolean' % name)
+    return bool(bol)
+
+
 class SortedDict(dict):
     """
     A dictionary that keeps its keys in the order in which they're inserted.

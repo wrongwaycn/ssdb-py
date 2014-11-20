@@ -35,9 +35,10 @@ class TestBatchCase(object):
         batch.hset('hset_a', 'b', 'b1')
         batch.hset('hset_a', 'c', 'c1')
         batch.hset('hset_a', 'd', 'd1')
+        batch.hmget('hset_a','a','b','c','d')
         a1 = self.client.get('test_set_a')
         assert_is_none(a1)
-        batch.execute()
+        spe = batch.execute()
         a1 = self.client.get('test_set_a')
         assert_equals(a1,'a1')
         b2 = self.client.get('test_set_b')
@@ -60,4 +61,7 @@ class TestBatchCase(object):
                                      'test_set_d')
         d = self.client.hclear('hset_a')
         assert_true(d)
-        
+
+        print('==============================')
+        print(spe)
+        ddd

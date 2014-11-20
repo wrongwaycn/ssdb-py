@@ -26,6 +26,10 @@ Client
    """
    .. automethod:: StrictSSDB.get
 
+   getset
+   """"""
+   .. automethod:: StrictSSDB.getset
+
    set
    """
    .. automethod:: StrictSSDB.set
@@ -33,6 +37,18 @@ Client
    add
    """
    The same is `set`_.
+
+   setnx
+   """""
+   .. automethod:: StrictSSDB.setnx
+
+   expire
+   """"""
+   .. automethod:: StrictSSDB.expire
+
+   ttl
+   """
+   .. automethod:: StrictSSDB.ttl
 
    setx
    """"
@@ -57,6 +73,26 @@ Client
    decr
    """"
    .. automethod:: StrictSSDB.decr
+
+   getbit
+   """"""
+   .. automethod:: StrictSSDB.getbit
+
+   setbit
+   """"""
+   .. automethod:: StrictSSDB.setbit
+
+   countbit
+   """"""""
+   .. automethod:: StrictSSDB.countbit
+
+   substr
+   """"""
+   .. automethod:: StrictSSDB.substr
+
+   strlen
+   """"""
+   .. automethod:: StrictSSDB.strlen
 
    multi_set
    """""""""
@@ -159,6 +195,10 @@ Client
    """""
    .. automethod:: StrictSSDB.hsize
 
+   hlen
+   """"
+   The same is `hsize`_.
+
    multi_hget
    """"""""""
    .. automethod:: StrictSSDB.multi_hget
@@ -187,9 +227,9 @@ Client
    """""
    .. automethod:: StrictSSDB.hlist
 
-   hlen
-   """"
-   The same is `hlist`_.
+   hrlist
+   """"""
+   .. automethod:: StrictSSDB.hrlist
 
    hkeys
    """""
@@ -268,6 +308,14 @@ Client
    """""
    .. automethod:: StrictSSDB.zsize
 
+   zlen
+   """"
+   The same is `zsize`_.
+
+   zcard
+   """""
+   The same is `zsize`_.
+
    multi_zget
    """"""""""
    .. automethod:: StrictSSDB.multi_zget
@@ -296,13 +344,9 @@ Client
    """""
    .. automethod:: StrictSSDB.zlist
 
-   zlen
-   """"
-   The same is `zlist`_.
-
-   zcard
-   """""
-   The same is `zlist`_.
+   zrlist
+   """"""
+   .. automethod:: StrictSSDB.zrlist
 
    zkeys
    """""
@@ -331,3 +375,109 @@ Client
    zrrange
    """""""
    .. automethod:: StrictSSDB.zrrange
+
+   zcount
+   """"""
+   .. automethod:: StrictSSDB.zcount
+
+   zsum
+   """"
+   .. automethod:: StrictSSDB.zsum
+
+   zavg
+   """"
+   .. automethod:: StrictSSDB.zavg
+
+   zremrangebyrank
+   """""""""""""""
+   .. automethod:: StrictSSDB.zremrangebyrank
+
+   zremrangebyscore
+   """"""""""""""""
+   .. automethod:: StrictSSDB.zremrangebyscore
+
+
+   Queue
+   ^^^^^
+
+   A queue in ssdb.
+
+   .. code-block:: python
+
+      >>> from ssdb.client import SSDB
+      >>> ssdb = SSDB()
+      >>> ssdb.qpush('queue_1', 'a', 'b', 'c', 'd', 'e', 'f', 'g')
+      >>> ssdb.qpush('queue_2',
+      ...            'test1',
+      ...            'test2',
+      ...            'test3',
+      ...            'test4',
+      ...            'test5',
+      ...            'test6',
+      ...            )
+
+   qsize
+   """""
+   .. automethod:: StrictSSDB.qsize
+
+   qlist
+   """""
+   .. automethod:: StrictSSDB.qlist
+
+   qrlist
+   """"""
+   .. automethod:: StrictSSDB.qrlist
+
+   qclear
+   """"""
+   .. automethod:: StrictSSDB.qclear
+
+   qfront
+   """"""
+   .. automethod:: StrictSSDB.qfront
+
+   qback
+   """""
+   .. automethod:: StrictSSDB.qback
+
+   qget
+   """"
+   .. automethod:: StrictSSDB.qget
+
+   qrange
+   """"""
+   .. automethod:: StrictSSDB.qrange
+
+   qslice
+   """"""
+   .. automethod:: StrictSSDB.qslice
+
+   qpush_front
+   """""""""""
+   .. automethod:: StrictSSDB.qpush_front
+
+   qpush_back
+   """"""""""
+   .. automethod:: StrictSSDB.qpush_back
+
+   qpush
+   """""
+   .. automethod:: StrictSSDB.qpush
+
+   qpop_front
+   """"""""""
+   .. automethod:: StrictSSDB.qpop_front
+
+   qpop
+   """"
+   .. automethod:: StrictSSDB.qpop
+
+   qpop_back
+   """""""""
+   .. automethod:: StrictSSDB.qpop_back
+
+   queue_exists
+   """"""""""""
+   .. automethod:: StrictSSDB.queue_exists
+
+

@@ -1,8 +1,9 @@
 #coding=utf-8
+import math
 from nose.tools import (assert_equals, assert_dict_equal, assert_not_equals,
                         assert_tuple_equal, assert_true, assert_false,
                         assert_list_equal, assert_is_none, assert_items_equal,
-                        raises)
+                        assert_almost_equal, raises)
 import ssdb
 from ssdb.connection import Connection,ConnectionPool,BlockingConnectionPool
 from ssdb.client import SSDB
@@ -42,7 +43,78 @@ class TestClient(object):
         b = self.client.delete('set_test')
         assert_true(b)
         c = self.client.exists('set_test')
+        assert_false(c)
+
+    def test_getset(self):
+        self.client.delete('getset_test')
+        a = self.client.getset('getset_test','abc')
+        assert_is_none(a)
+        b = self.client.get('getset_test')
+        assert_equals(b,'abc')                
+        c = self.client.set('getset_test','abc')
+        assert_true(c)
+        d = self.client.getset('getset_test','defg')
+        assert_equals(d,'abc')
+        e = self.client.getset('getset_test','hijk')
+        assert_equals(e,'defg')        
+        f = self.client.delete('getset_test')
+        assert_true(f)
+        g = self.client.exists('getset_test')
+        assert_false(g)
+
+    def test_setnx(self):
+        self.client.delete('setnx_test')
+        a = self.client.setnx('setnx_test','abc')
+        assert_true(a)
+        b = self.client.get('setnx_test')
+        assert_equals(b,'abc')                
+        c = self.client.setnx('setnx_test','def')
+        assert_false(c)
+        f = self.client.delete('setnx_test')
+        assert_true(f)
+        g = self.client.exists('setnx_test')
+        assert_false(g)
+
+    def test_bit(self):
+        self.client.delete('bit_test')
+        self.client.set('bit_test',1)
+        a = self.client.countbit('bit_test')
+        assert_equals(a,3)
+        a = self.client.setbit('bit_test', 1, 1)
+        assert_false(a)
+        a = self.client.getbit('bit_test', 1)
+        assert_true(a)        
+        b = self.client.get('bit_test')
+        assert_equals(b,'3')                
+        c = self.client.setbit('bit_test', 2, 1)
         assert_false(c)        
+        b = self.client.get('bit_test')
+        assert_equals(b,'7')
+        c = self.client.setbit('bit_test', 2, 0)
+        assert_true(c)
+        c = self.client.getbit('bit_test', 2)
+        assert_false(c)
+        c = self.client.set('bit_test', '1234567890')
+        c = self.client.countbit('bit_test', 0, 1)
+        assert_equals(c,3)
+        c = self.client.countbit('bit_test', 3, -3)
+        assert_equals(c,16)        
+        f = self.client.delete('bit_test')
+        assert_true(f)
+
+    def test_str(self):
+        self.client.delete('str_test')
+        self.client.set('str_test',"abc12345678")
+        a = self.client.substr('str_test', 2, 4)
+        assert_equals(a, "c123")
+        a = self.client.substr('str_test', -2, 2)
+        assert_equals(a, "78")
+        a = self.client.substr('str_test', 1, -1)
+        assert_equals(a, "bc1234567")
+        a = self.client.strlen('str_test')
+        assert_equals(a, 11)                
+        f = self.client.delete('str_test')
+        assert_true(f)
 
     @raises(ValueError)
     def test_incr(self):
@@ -54,11 +126,13 @@ class TestClient(object):
         assert_equals(a,'10')
         a = self.client.incr('incr0',2)
         assert_equals(a,12)
+        a = self.client.incr('incr0',-2)
+        assert_equals(a,10)        
         b = self.client.get('incr0')
         assert_equals(int(b),a)
         a = self.client.delete('incr0')
         assert_true(a)                
-        c = self.client.incr('incr0', 0)
+        c = self.client.incr('incr0', 'abc')
 
     @raises(ValueError)
     def test_decr(self):
@@ -244,6 +318,7 @@ class TestClient(object):
         #assert_false(d)
 
     def test_hincr(self):
+        self.client.hclear('test_counter')        
         a = self.client.hset('test_counter', 'hincr', 100)
         assert_true(a)
         b = self.client.hincr('test_counter', 'hincr', 10)
@@ -270,6 +345,24 @@ class TestClient(object):
         assert_equals(b, 3)
         d = self.client.hclear('test_hsize')
         assert_true(d)
+
+    def test_hgetall(self):
+        self.client.hclear('test_hgetall')        
+        self.client.delete('test_hgetall')
+        dct = {
+            'a':"AA",
+            'b':"BB",
+            'c':"CC",
+            'd':"DD"
+        }
+        a = self.client.multi_hset('test_hgetall', **dct)
+        assert_equals(a,4)
+        a = self.client.hgetall('test_hgetall')
+        assert_dict_equal(a,dct)
+        b = self.client.delete('test_hgetall')
+        d = self.client.hclear('test_hgetall')
+        assert_true(d)
+        self.client.delete('test_hgetall')
 
     def test_hmulti(self):
         params = {
@@ -349,10 +442,21 @@ class TestClient(object):
             },            
         }
         for k,v in params.items():
+            a = self.client.hclear(k)
+
+        for k,v in params.items():
             a = self.client.multi_hset(k, **v)
             assert_equals(a,len(v))
         c = self.client.hlist('hash_ ', 'hash_z', 10)
         assert_items_equal(c,params.keys())
+
+        lst = ['hash_a','hash_b','hash_c','hash_d']
+        for index,item in enumerate(c):
+            assert_equals(item,lst[index])
+        c = self.client.hrlist('hash_z', 'hash_ ', 10)
+        lst.reverse()
+        for index,item in enumerate(c):
+            assert_equals(item,lst[index])
         for k,v in params.items():
             a = self.client.hclear(k)
             assert_true(a)
@@ -473,3 +577,185 @@ class TestClient(object):
         d = self.client.zclear('zset_b')
         assert_true(d)
             
+    def test_zset(self):
+        zset_1 = {
+            'a': 30,
+            'b': 20,
+            'c': 100,
+            'd': 1,
+            'e': 64,
+            'f': -3,
+            'g': 0
+        }
+        self.client.zclear('zset_1')
+        self.client.delete('zset_1')
+        a = self.client.multi_zset('zset_1', **zset_1)
+        assert_equals(a, len(zset_1))
+        b = self.client.zcount('zset_1', 20, 70)
+        assert_equals(b, 3)
+        c = self.client.zcount('zset_1', 0, 100)
+        assert_equals(c, 6)
+        d = self.client.zcount('zset_1', 2, 3)
+        assert_equals(d, 0)
+
+        b = self.client.zsum('zset_1', 20, 70)
+        assert_equals(b, 114)
+        c = self.client.zsum('zset_1', 0, 100)
+        assert_equals(c, 215)
+        d = self.client.zsum('zset_1', 2, 3)
+        assert_equals(d, 0)
+
+        b = self.client.zavg('zset_1', 20, 70)
+        assert_equals(b, 38.0)
+        c = self.client.zavg('zset_1', 0, 100)
+        assert_equals(round(abs(c-215.0/6),4),0)
+        d = self.client.zavg('zset_1', 2, 3)
+        assert_true(math.isnan(float('nan')))
+
+        b = self.client.zremrangebyrank('zset_1', 0, 2)
+        assert_equals(b, 3)
+        b = self.client.zremrangebyrank('zset_1', 1, 2)
+        assert_equals(b, 2)
+
+        a = self.client.multi_zset('zset_1', **zset_1)
+        b = self.client.zremrangebyscore('zset_1', 20, 70)
+        assert_equals(b, 3)
+        b = self.client.zremrangebyscore('zset_1', 0, 100)
+        assert_equals(b, 3)
+                        
+        self.client.zclear('zset_1')
+        self.client.delete('zset_1')
+
+    def test_queue(self):
+        self.client.qclear('queue_1')
+        self.client.qclear('queue_2')
+        queue_1 = ['a','b','c','d','e','f','g']
+        queue_2 = ['test1','test2','test3','test4','test5','test6']
+        #qpush
+        a = self.client.qpush('queue_1',*queue_1)
+        assert_equals(a,len(queue_1))
+        a = self.client.qpush('queue_2',*queue_2)
+        assert_equals(a,len(queue_2))
+        
+        #qsize
+        a = self.client.qsize('queue_1')
+        assert_equals(a,len(queue_1))
+
+        #qlist
+        a = self.client.qlist('queue_1', 'queue_2', 10)
+        assert_equals(a,['queue_2'])
+        a = self.client.qlist('queue_', 'queue_2', 10)
+        assert_equals(a,['queue_1', 'queue_2'])
+        a = self.client.qlist('z', '', 10)
+        assert_equals(a,[])
+
+        #qrlist
+        a = self.client.qrlist('queue_2', 'queue_1', 10)
+        assert_equals(a,['queue_1'])
+        a = self.client.qrlist('queue_z', 'queue_', 10)
+        assert_equals(a,['queue_2', 'queue_1'])
+        a = self.client.qrlist('z', '', 10)
+        assert_equals(a,['queue_2', 'queue_1'])
+
+        #qfront
+        a = self.client.qfront('queue_1')
+        assert_equals(a,'a')
+
+        #qback
+        a = self.client.qback('queue_1')
+        assert_equals(a,'g')
+
+        #qget
+        a = self.client.qget('queue_1',2)
+        assert_equals(a,'c')
+        a = self.client.qget('queue_1',0)
+        assert_equals(a,'a')
+        a = self.client.qget('queue_1',-1)
+        assert_equals(a,'g')
+
+        #qset
+        a = self.client.qset('queue_1',0,'aaa')
+        a = self.client.qget('queue_1',0)
+        assert_equals(a,'aaa')
+        a = self.client.qset('queue_1',0,'a')
+
+        #qrange
+        a = self.client.qrange('queue_1', 2, 2)
+        assert_list_equal(a,['c','d'])
+        a = self.client.qrange('queue_1', 2, 10)
+        assert_list_equal(a,['c','d','e','f','g'])
+        a = self.client.qrange('queue_1', -1, 1)
+        assert_list_equal(a,['g'])
+
+        #qslice
+        a = self.client.qslice('queue_1', 2, 2)
+        assert_list_equal(a,['c'])
+        a = self.client.qslice('queue_1', 2, 3)
+        assert_list_equal(a,['c','d'])
+        a = self.client.qslice('queue_1', 2, 10)
+        assert_list_equal(a,['c','d','e','f','g'])
+        a = self.client.qslice('queue_1', -3, 5)
+        assert_list_equal(a,['e','f'])
+
+        #qpush
+        a = self.client.qpush_back('queue_1','h')
+        assert_equals(a,8)
+        a = self.client.qpop_back('queue_1')
+        assert_list_equal(a,['h'])
+        a = self.client.qpush_back('queue_1','h','i','j','k')
+        assert_equals(a,11)
+        a = self.client.qpop_back('queue_1',4)
+        assert_list_equal(a,['k','j','i','h'])
+
+        a = self.client.qpush('queue_1','h')
+        assert_equals(a,8)
+        a = self.client.qpop_back('queue_1')
+        assert_list_equal(a,['h'])
+        a = self.client.qpush('queue_1','h','i','j','k')
+        assert_equals(a,11)
+        a = self.client.qpop_back('queue_1',4)
+        assert_list_equal(a,['k','j','i','h'])        
+
+        a = self.client.qpush_front('queue_1','0')
+        assert_equals(a,8)
+        a = self.client.qpop_front('queue_1')
+        assert_list_equal(a,['0'])
+        a = self.client.qpush_front('queue_1','0','1','2','3')
+        assert_equals(a,11)
+        a = self.client.qpop_front('queue_1',4)
+        assert_list_equal(a,['3','2','1','0'])
+
+        a = self.client.qpush_front('queue_1','0')
+        assert_equals(a,8)
+        a = self.client.qpop('queue_1')
+        assert_list_equal(a,['0'])
+        a = self.client.qpush_front('queue_1','0','1','2','3')
+        assert_equals(a,11)
+        a = self.client.qpop('queue_1',4)
+        assert_list_equal(a,['3','2','1','0'])
+
+        #qrem_front
+        a = self.client.qrem_front('queue_1',3)
+        assert_equals(a,3)
+        a = self.client.qpop('queue_1',10)
+        assert_list_equal(a,['d','e','f','g'])
+        a = self.client.qpush('queue_1',*queue_1)
+        assert_equals(a,len(queue_1))
+        
+        #qrem_back
+        a = self.client.qrem_back('queue_1',3)
+        assert_equals(a,3)
+        a = self.client.qpop('queue_1',10)
+        assert_list_equal(a,['a','b','c','d'])
+        a = self.client.qpush('queue_1',*queue_1)
+        assert_equals(a,len(queue_1))               
+        
+        #qpop
+        a = self.client.qpop('queue_1',len(queue_1))
+        assert_list_equal(a,queue_1)
+        
+        #qclear
+        a = self.client.qclear('queue_2')
+        assert_equals(a, 6)
+        b = self.client.qclear('queue_1')
+        assert_equals(b, 0)
